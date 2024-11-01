@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        /* Global Styles */
+        body, html {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c2c2c, #1e1e1e);
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #333333;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        /* Header */
+        h1 {
+            font-size: 2.5em;
+            color: #ffffff;
+            margin: 0;
+            margin-bottom: 20px;
+        }
+
+        /* News List */
+        .news-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* News Item */
+        .news-item {
+            background: #444444;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .news-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* News Title */
+        .news-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4da6ff;
+            margin: 0;
+            margin-bottom: 10px;
+        }
+        .news-title a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .news-title a:hover {
+            color: #66c0ff;
+            text-decoration: underline;
+        }
+
+        /* Description */
+        .news-description {
+            font-size: 1em;
+            color: #cccccc;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        /* Source and Date */
+        .news-meta {
+            font-size: 0.9em;
+            color: #aaaaaa;
+        }
+
+        /* Error Message */
+        .error-message {
+            color: #ff6b6b;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><%= title %></h1>
+
+        <% if (error) { %>
+            <p class="error-message"><%= error %></p>
+        <% } %>
+
+        <ul class="news-list">
+            <% articles.forEach(article => { %>
+                <li class="news-item">
+                    <div class="news-title">
+                        <a href="<%= article.link %>" target="_blank"><%= article.title %></a>
+                    </div>
+                    <div class="news-description"><%= article.description %></div>
+                    <div class="news-meta">
+                        Source: <%= article.source %> <br>
+                        Published on: <%= new Date(article.pubDate).toLocaleString() %>
+                    </div>
+                </li>
+            <% }) %>
+        </ul>
+    </div>
+</body>
+</html>
+

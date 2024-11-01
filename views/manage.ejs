@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        /* Form styles */
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        textarea {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #add-post-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        #add-post-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .post-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .post-item {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .edit-btn {
+            background-color: #28a745;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+        }
+
+        .edit-btn:hover {
+            background-color: #218838;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .message {
+            color: #28a745;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manage Blog Posts</h1>
+
+        <!-- Form to add/edit posts -->
+        <form id="post-form">
+            <input type="hidden" id="post-id">
+            <input type="text" id="title" placeholder="Enter post title" required>
+            <textarea id="content" rows="4" placeholder="Enter post content" required></textarea>
+            <button type="button" id="add-post-btn" onclick="addOrUpdatePost()">Add Post</button>
+        </form>
+
+        <!-- Display message -->
+        <div id="message" class="message"></div>
+
+        <!-- List of blog posts -->
+        <ul id="post-list" class="post-list"></ul>
+    </div>
+
+    <script>
+        // Fetch and display all posts on page load
+        async function loadPosts() {
+            const response = await fetch('/api/blog');
+            const posts = await response.json();
+            const postList = document.getElementById('post-list');
+            postList.innerHTML = '';
+            posts.forEach(post => {
+                const postItem = document.createElement('li');
+                postItem.classList.add('post-item');
+                postItem.innerHTML = `
+                    <span class="post-title">${post.title}</span>
+                    <div class="post-actions">
+                        <button class="edit-btn" onclick="editPost('${post._id}', '${post.title}', '${post.content}')">Edit</button>
+                        <button class="delete-btn" onclick="deletePost('${post._id}')">Delete</button>
+                    </div>
+                `;
+                postList.appendChild(postItem);
+            });
+        }
+
+        // Add or update a post
+        async function addOrUpdatePost() {
+            const postId = document.getElementById('post-id').value;
+            const title = document.getElementById('title').value.trim();
+            const content = document.getElementById('content').value.trim();
+            const message = document.getElementById('message');
+            if (!title || !content) {
+                message.textContent = "Both title and content are required.";
+                return;
+            }
+
+            const postData = { title, content };
+
+            if (postId) {
+                // Update existing post
+                await fetch(`/api/blog/${postId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(postData)
+                });
+                message.textContent = "Post updated successfully!";
+            } else {
+                // Add new post
+                await fetch('/api/blog', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(postData)
+                });
+                message.textContent = "Post added successfully!";
+            }
+
+            // Clear the form and reload posts
+            clearForm();
+            loadPosts();
+        }
+
+        // Edit a post
+        function editPost(id, title, content) {
+            document.getElementById('post-id').value = id;
+            document.getElementById('title').value = title;
+            document.getElementById('content').value = content;
+            document.getElementById('add-post-btn').textContent = "Update Post";
+        }
+
+        // Delete a post
+        async function deletePost(id) {
+            await fetch(`/api/blog/${id}`, { method: 'DELETE' });
+            document.getElementById('message').textContent = "Post deleted successfully!";
+            loadPosts();
+        }
+
+        // Clear the form
+        function clearForm() {
+            document.getElementById('post-id').value = '';
+            document.getElementById('title').value = '';
+            document.getElementById('content').value = '';
+            document.getElementById('add-post-btn').textContent = "Add Post";
+            document.getElementById('message').textContent = '';
+        }
+
+        // Load posts on page load
+        loadPosts();
+    </script>
+</body>
+</html>
+

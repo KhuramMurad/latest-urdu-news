@@ -1,0 +1,19 @@
+{
+  "name": "urdu-news-app",
+  "version": "1.0.0",
+  "description": "An Urdu news aggregator fetching news from HUM News RSS feed.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "rss-parser": "^3.9.0",
+    "dotenv": "^10.0.0",
+    "ejs": "^3.1.6",
+    "mongoose": "^5.13.8"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}
+
