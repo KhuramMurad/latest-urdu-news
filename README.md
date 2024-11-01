@@ -1,7 +1,3 @@
-Here’s an updated `README.md` file with a **Screenshots** section, including instructions on how to add a screenshot image:
-
----
-
 # Latest Urdu News
 
 A simple web application that fetches and displays the latest Urdu news articles from a selected RSS feed. This project uses Node.js, Express, and EJS for templating, and it is fully Dockerized for easy deployment. The application presents news articles in a visually appealing dark-themed interface.
